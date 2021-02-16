@@ -6,6 +6,5 @@ import com.smile.tech.model.Attendence;
 public interface AttendenceRepository extends MongoRepository<Attendence, String> {
 
 	public Attendence findByUserID(String userID);
-	// public List<Attendence> findByDate(String date);
 
 }

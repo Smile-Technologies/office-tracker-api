@@ -111,11 +111,11 @@ public class UsersControllerTests {
 
 		Users U1 = service.findById(USER_ID);
 
-		when(service2.findByUserID(USER_ID)).thenReturn(null);
+		when(service2.findById(USER_ID)).thenReturn(null);
 		service2.saveAttendence(U1);
 
 		Attendence att = new Attendence();
-		when(service2.findByUserID(USER_ID)).thenReturn(att);
+		when(service2.findById(USER_ID)).thenReturn(att);
 		service2.updateAttendence(att);
 
 		System.out.println("Test 4 Complete");

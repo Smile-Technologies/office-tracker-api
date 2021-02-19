@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document
+@Document(collection = "attendence")
 public class Attendence {
 
 	@Id
@@ -13,6 +13,7 @@ public class Attendence {
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private String userID;
+	private String username;
 
 	public String getId() {
 		return id;
@@ -44,8 +45,14 @@ public class Attendence {
 
 	public void setUserID(String userID) {
 		this.userID = userID;
-		
 	}
 
+	public String getUsername() {
+		return username;
+	}
 
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 }

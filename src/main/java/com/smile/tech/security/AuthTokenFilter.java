@@ -22,6 +22,7 @@ import com.smile.tech.service.UsersDetailServiceImpl;
 public class AuthTokenFilter extends OncePerRequestFilter {
 
 	public static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
+	
 	@Autowired
 	private JwtUtils jwtUtils;
 

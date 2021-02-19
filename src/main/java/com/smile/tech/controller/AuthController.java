@@ -32,13 +32,18 @@ import com.smile.tech.payload.response.JwtResponse;
 import com.smile.tech.payload.response.MessageResponse;
 import com.smile.tech.repository.RoleRepository;
 import com.smile.tech.security.JwtUtils;
+import com.smile.tech.service.AuthenticationService;
 import com.smile.tech.service.UsersDetailImpl;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 import com.smile.tech.repository.UsersRepository;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/auth")
+@Api
 public class AuthController {
 
 	@Autowired
@@ -55,37 +60,35 @@ public class AuthController {
 
 	@Autowired
 	JwtUtils jwtUtils;
+	
+	@Autowired
+	AuthenticationService service;
 
+	@ApiOperation(value = "Common Login for All users")
 	@PostMapping("/signin")
 	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
-
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-		String jwt = jwtUtils.generateJwtToken(authentication);
-
-		UsersDetailImpl userDetails = (UsersDetailImpl) authentication.getPrincipal();
-		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
-				.collect(Collectors.toList());
-
-		return ResponseEntity.ok(new JwtResponse(userDetails.getId(), userDetails.getUsername(),
-				userDetails.getCreatedDate(), roles, jwt));
+		
+		return service.authenticateUserLogin(loginRequest);
+		
 	}
+
+	@ApiOperation(value = "User signup performed by Admin or Manager")
 	@PreAuthorize("hasRole('ROLE_MANAGER') or hasRole('ROLE_ADMIN')")
 	@PostMapping("/user/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+		
+	
 
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: User Name is already in use!"));
 		}
-		
+
 		Users user = new Users(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
 
 		Set<String> strRoles = signUpRequest.getRoles();
 		Set<Role> roles = new HashSet<>();
 
-		if (strRoles==null) {
+		if (strRoles == null) {
 			Role userRole = roleRepository.findByName(ERole.ROLE_USER)
 					.orElseThrow(() -> new RuntimeException("Error: Role is not found."));
 			roles.add(userRole);
@@ -100,9 +103,10 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
+	@ApiOperation(value = "Admin signup performed by SuperAdmin")
 	@PreAuthorize("hasRole('ROLE_SUPERADMIN')")
 	@PostMapping("/admin/signup")
-	public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignupRequest signUpRequest) {   	
+	public ResponseEntity<?> registerAdmin(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userRepository.existsByUsername(signUpRequest.getUsername())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: User Name is already in use!"));
 		}
@@ -126,6 +130,7 @@ public class AuthController {
 		return ResponseEntity.ok(new MessageResponse("Admin registered successfully!"));
 	}
 
+	@ApiOperation(value = "Manager signup performed by Admin")
 	@PreAuthorize("hasRole('ROLE_ADMIN')")
 	@PostMapping("/manager/signup")
 	public ResponseEntity<?> registerManager(@Valid @RequestBody SignupRequest signUpRequest) {
@@ -151,5 +156,10 @@ public class AuthController {
 		userRepository.save(user);
 
 		return ResponseEntity.ok(new MessageResponse("Manager registered successfully!"));
+	}
+	
+	@RequestMapping("/refresh")
+	public String refresh() {
+		return "Hello User";
 	}
 }

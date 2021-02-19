@@ -9,8 +9,6 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.stereotype.Service;
@@ -33,9 +31,10 @@ public class AttendenceService {
 		Attendence attendence = new Attendence();
 		attendence.setStartTime(date);
 		attendence.setUserID(user.getId());
+		attendence.setUsername(user.getUsername());
 
 		return repository.save(attendence);
-	}
+	};
 
 	public List<Attendence> findAll() {
 		return repository.findAll();
@@ -51,18 +50,14 @@ public class AttendenceService {
 		return repository.save(attendence);
 	}
 
-	public Attendence findByUserID(String id) {
-		return repository.findByUserID(id);
-	}
-
 	public ResponseEntity<?> attendenceRecord(Users user, List<Attendence> attendence) {
 
-		HttpHeaders headers = new HttpHeaders();
 		LocalDateTime localDateTime = LocalDateTime.now();
 		LocalDate today = localDateTime.toLocalDate();
 		List<Attendence> ls = new ArrayList<>();
 		if (attendence.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(saveAttendence(user));
+			saveAttendence(user);
+			return ResponseEntity.ok(new MessageResponse("Attendence Recorded!"));
 		}
 		for (int i = 0; i < attendence.size(); i++) {
 			if (user.getId().equals(attendence.get(i).getUserID())) {
@@ -74,15 +69,17 @@ public class AttendenceService {
 			for (int j = 0; j < ls.size(); j++) {
 				if (ls.get(j).getStartTime().toLocalDate().equals(today)) {
 					check = true;
-					return ResponseEntity.status(HttpStatus.ACCEPTED).headers(headers)
-							.body(updateAttendence(ls.get(j)));
+					updateAttendence(ls.get(j));
+					return ResponseEntity.ok(new MessageResponse("Attendence Details Updated!"));
 				}
 			}
 			if (!check) {
-				return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(saveAttendence(user));
+				saveAttendence(user);
+				return ResponseEntity.ok(new MessageResponse("Attendence Recorded!"));
 			}
 		} else {
-			return ResponseEntity.status(HttpStatus.CREATED).headers(headers).body(saveAttendence(user));
+			saveAttendence(user);
+			return ResponseEntity.ok(new MessageResponse("Attendence Recorded!"));
 		}
 		return ResponseEntity.badRequest().body(new MessageResponse("Error: something went wrong..."));
 	}
@@ -166,7 +163,7 @@ public class AttendenceService {
 
 		int i = 0, j = 0;
 		for (i = 0; i < 7; i++) {
-		   LocalDate dateIncrement = LocalDate.parse(weekdayofyear).plusDays(i);
+			LocalDate dateIncrement = LocalDate.parse(weekdayofyear).plusDays(i);
 			for (j = 0; j < ls.size(); j++) {
 				if (ls.get(j).getStartTime().toLocalDate().equals(dateIncrement)) {
 					list.add(ls.get(j));

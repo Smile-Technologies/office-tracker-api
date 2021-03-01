@@ -3,6 +3,8 @@ package com.smile.tech.service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -26,7 +28,8 @@ public class AttendenceService {
 
 	public Attendence saveAttendence(Users user) {
 
-		LocalDateTime date = LocalDateTime.now();
+		ZonedDateTime zdtAtET = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+        LocalDateTime date = zdtAtET.toLocalDateTime();
 
 		Attendence attendence = new Attendence();
 		attendence.setStartTime(date);
@@ -45,15 +48,20 @@ public class AttendenceService {
 	}
 
 	public Attendence updateAttendence(Attendence attendence) {
-		LocalDateTime date = LocalDateTime.now();
+		
+		ZonedDateTime zdtAtET = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+        LocalDateTime date = zdtAtET.toLocalDateTime();
+        
 		attendence.setEndTime(date);
 		return repository.save(attendence);
 	}
 
 	public ResponseEntity<?> attendenceRecord(Users user, List<Attendence> attendence) {
 
-		LocalDateTime localDateTime = LocalDateTime.now();
-		LocalDate today = localDateTime.toLocalDate();
+		ZonedDateTime zdtAtET = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+        LocalDateTime date = zdtAtET.toLocalDateTime();
+
+		LocalDate today = date.toLocalDate();
 		List<Attendence> ls = new ArrayList<>();
 		if (attendence.isEmpty()) {
 			saveAttendence(user);

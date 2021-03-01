@@ -1,4 +1,4 @@
-package com.smile.tech.security;
+package com.smile.tech.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.smile.tech.security.AuthTokenFilter;
+import com.smile.tech.security.AuthentryPointjwt;
 import com.smile.tech.service.UsersDetailServiceImpl;
 
 @Configuration

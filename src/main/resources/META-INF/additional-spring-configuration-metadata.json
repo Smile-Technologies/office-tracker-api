@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "smiletech.app.jwtExpirationMs",
+    "type": "java.lang.String",
+    "description": "A description for 'smiletech.app.jwtExpirationMs'"
+  },
+  {
+    "name": "smiletech.app.secretKey",
+    "type": "java.lang.String",
+    "description": "A description for 'smiletech.app.secretKey'"
+  },
+  {
+    "name": "smiletech.app.secretKey",
+    "type": "java.lang.String",
+    "description": "A description for 'smiletech.app.secretKey'"
+  },
+  {
+    "name": "smiletech.app.jwtExpirationMs",
+    "type": "java.lang.String",
+    "description": "A description for 'smiletech.app.jwtExpirationMs'"
+  }
+]}
